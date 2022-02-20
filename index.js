@@ -40,7 +40,7 @@ app.get("/auth", (req, res) => {
     if (typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.send("No");
 
     const authorizationUri = client.authorizeURL({
-        redirect_uri: `${configFile.base_uri}/callback```,
+        redirect_uri: `${configFile.base_uri}/callback`,
         scope: "user/basic",
         state: req.query.state
     });
