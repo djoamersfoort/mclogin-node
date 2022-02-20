@@ -40,7 +40,7 @@ app.get("/auth", (req, res) => {
     if (typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.send("No");
 
     const authorizationUri = client.authorizeURL({
-        redirect_uri: 'http://localhost:3000/callback',
+        redirect_uri: `${configFile.base_uri}/callback```,
         scope: "user/basic",
         state: req.query.state
     });
@@ -52,7 +52,7 @@ app.get("/callback", async (req, res) => {
 
     const tokenParams = {
         code: req.query.code,
-        redirect_uri: 'http://localhost:3000/callback',
+        redirect_uri: `${configFile.base_uri}/callback`,
         scope: "user/basic",
     };
 
@@ -140,7 +140,7 @@ app.get("/api/genState", (req, res) => {
 
     return res.json({
         state: stateID,
-        auth: "http://localhost:3000/login.html?state=" + stateID
+        auth: `${configFile.base_uri}/login.html?state=${stateID}`
     })
 });
 app.get("/api/checkState", (req, res) => {
