@@ -10,7 +10,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  IMAGE_NAME: musicbot
+  IMAGE_NAME: mclogin-node
 
 jobs:
   # Push image to GitHub Packages.
