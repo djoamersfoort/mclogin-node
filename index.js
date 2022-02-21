@@ -1,4 +1,5 @@
 const express = require("express");
+const sessions = require("express-session");
 const { AuthorizationCode } = require("simple-oauth2");
 const axios = require("axios");
 const fs = require("fs");
@@ -8,6 +9,12 @@ const PORT = process.env.port || 3000;
 
 const app = express();
 app.use(express.static("public"));
+app.use(sessions({
+    secret: configFile.session_key,
+    saveUninitialized:true,
+    cookie: { maxAge: 24 * 60 * 60 * 10000 },
+    resave: false
+}))
 const client = new AuthorizationCode(configFile.oauth);
 const states = new Map();
 let db = new Map();
@@ -85,6 +92,8 @@ app.get("/callback", async (req, res) => {
                 saveDB();
                 state.ownerShip = true;
             }
+
+            req.session.username = state.username;
             return res.send("Use /verify in Minecraft to finish signing in");
         })
             .catch(err => {
@@ -122,6 +131,8 @@ app.get("/inviteLogin", (req, res) => {
             return res.send(`You can't own multiple mc accounts, try using the account with the username ${db.get(_res.data.id)}. <br>Changed your username? Reach out to a DJO Minecraft server admin`);
         }
     }
+
+    req.session.username = state.username;
 
     return res.send("Use /verify in Minecraft to finish signing in");
 });
