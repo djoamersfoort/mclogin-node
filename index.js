@@ -137,6 +137,18 @@ app.get("/inviteLogin", (req, res) => {
     return res.send("Use /verify in Minecraft to finish signing in");
 });
 
+// Login page
+app.get("/login", (req, res) => {
+    if (typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.send("No");
+    const state = states.get(req.query.state);
+    if (req.session.username && state.username === req.session.username) {
+        state.ownerShip = true;
+        return res.send("Use /verify in Minecraft to finish signing in");
+    }
+
+    res.sendFile(__dirname + "/public/login.html");
+})
+
 // API for mc server
 app.get("/api/genState", (req, res) => {
     if (typeof req.query.username === "undefined") return res.send("No");
