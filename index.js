@@ -163,7 +163,7 @@ app.get("/api/genState", (req, res) => {
 
     return res.json({
         state: stateID,
-        auth: `${configFile.base_uri}/login.html?state=${stateID}`
+        auth: `${configFile.base_uri}/login?state=${stateID}`
     })
 });
 app.get("/api/checkState", (req, res) => {
