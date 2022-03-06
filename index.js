@@ -94,6 +94,10 @@ app.get("/callback", async (req, res) => {
             }
 
             req.session.username = state.username;
+
+            req.session.method = 0;
+            state.method = 0;
+
             return res.send("Use /verify in Minecraft to finish signing in");
         })
             .catch(err => {
@@ -134,6 +138,9 @@ app.get("/inviteLogin", (req, res) => {
 
     req.session.username = state.username;
 
+    req.session.method = 1;
+    state.method = 1;
+
     return res.send("Use /verify in Minecraft to finish signing in");
 });
 
@@ -143,6 +150,7 @@ app.get("/login", (req, res) => {
     const state = states.get(req.query.state);
     if (req.session.username && state.username === req.session.username) {
         state.ownerShip = true;
+        state.method = req.session.method;
         return res.send("Use /verify in Minecraft to finish signing in");
     }
 
@@ -158,7 +166,8 @@ app.get("/api/genState", (req, res) => {
 
     states.set(stateID, {
         username,
-        ownerShip: null
+        ownerShip: null,
+        method: null
     });
 
     return res.json({
