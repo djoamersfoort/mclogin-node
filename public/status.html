@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    background-color: #111259;
+    font-family: sans-serif;
+    text-align: center;
+    color: white;
+}
+img {
+    width: 16%;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+div {
+    width: 40%;
+    height: 50%;
+    min-height: 340px;
+    position: absolute;
+    top: 25%;
+    left: 30%;
+    background-color: #0e1029;
+    border-radius: 6px;
+}
+div h1 {
+    color: lightgreen;
+    font-size: 2.5em;
+}
+div h2 b {
+    display: block;
+    color: lightgoldenrodyellow;
+    font-size: 2em;
+    margin: 7px 0;
+}
+hr {
+    border: 1px solid lightgreen;
+}
+</style>
+</head>
+<body>
+<img src="https://leden.djoamersfoort.nl/static/img/logo-base.png">
+<div>
+<h1>Yes, gelukt!</h1>
+<hr>
+<br>
+<h2>Gebruik nu <b>/verify</b> om in Minecraft in te loggen.
+<br><br>Je kan dit venster nu sluiten.</h2>
+</div>
+<script>
+/** Codes overview:
+ * 0 = 'No'
+ * 1 = No multiple accounts [REQUIRES EXTRA INFO]
+ * 2 = Someone else uses <name> [REQUIRES EXTRA INFO]
+ * 3 = Error while fetching data
+ * 4 = Error while handling login
+ * 5 = Invite key doesn't exist
+ * When omitted, the login succeeded.
+ */
+var usp = new URLSearchParams(location.search);
+var code = usp.get("code");
+var extraInfo = usp.get("info");
+if (code != null) {
+    document.querySelector("h1").innerHTML = "Oei!";
+    document.querySelector("h1").style.color = "salmon";
+    document.querySelector("hr").style.border = "1px solid salmon";
+}
+if (code == 0) document.querySelector("h2").innerHTML = "Ergens ging iets niet helemaal lekker...";
+else if (code == 1) document.querySelector("h2").innerHTML = `Je mag niet meer Minecraft-accounts hebben. Probeer <b>${extraInfo}</b>te gebruiken.<br><br>Neem contact op met een admin als je je username gewijzigd hebt.`;
+else if (code == 2) document.querySelector("h2").innerHTML = `<b>${extraInfo}</b>wordt al door iemand anders gebruikt...`;
+else if (code == 3) document.querySelector("h2").innerHTML = "Er ging iets mis bij het ophalen van je gegevens...";
+else if (code == 4) document.querySelector("h2").innerHTML = "Er ging iets mis bij het verwerken van die login...";
+else if (code == 5) document.querySelector("h2").innerHTML = "De invite key die je gebruikte bestaat niet...";
+</script>
+</body>
+</html>
