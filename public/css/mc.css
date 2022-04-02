@@ -90,3 +90,12 @@ body {
 .input:focus {
     box-shadow: 0 1px 2px rgba(0,0,0,.05),0 0 0 .25rem rgba(52,89,230,.25);
 }
+.success {
+    color: lightgreen;
+}
+.error {
+    color: salmon;
+}
+b {
+    color: lightgoldenrodyellow;
+}
