@@ -44,7 +44,7 @@ function randomString(length) {
 
 // Oauth zooi
 app.get("/auth", (req, res) => {
-    if (typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.sendFile(__dirname + "/public/status.html?code=0");
+    if (typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.redirect("/status.html?code=0");
 
     const authorizationUri = client.authorizeURL({
         redirect_uri: `${configFile.base_uri}/callback`,
@@ -55,7 +55,7 @@ app.get("/auth", (req, res) => {
     res.redirect(authorizationUri);
 });
 app.get("/callback", async (req, res) => {
-    if (typeof req.query.state === "undefined" || !states.has(req.query.state) || typeof req.query.code === "undefined") return res.sendFile(__dirname + "/public/status.html?code=0");
+    if (typeof req.query.state === "undefined" || !states.has(req.query.state) || typeof req.query.code === "undefined") return res.redirect("/status.html?code=0");
 
     const tokenParams = {
         code: req.query.code,
@@ -78,14 +78,14 @@ app.get("/callback", async (req, res) => {
                     state.ownerShip = true;
                 } else {
                     state.ownerShip = false;
-                    return res.sendFile(__dirname + "/public/status.html?code=1&info=" + encodeURIComponent(db.get(_res.data.id)));
+                    return res.redirect("/status.html?code=1&info=" + encodeURIComponent(db.get(_res.data.id)));
                 }
             } else {
                 const values = [...db.values()];
                 const inviteValues = [...invites.values()];
                 if (values.includes(state.username) || inviteValues.includes(state.username)) {
                     state.ownerShip = false;
-                    return res.sendFile(__dirname + "/public/status.html?code=2&info=" + encodeURIComponent(state.username));
+                    return res.redirect("/status.html?code=2&info=" + encodeURIComponent(state.username));
                 }
 
                 db.set(_res.data.id, state.username);
@@ -98,21 +98,21 @@ app.get("/callback", async (req, res) => {
             req.session.method = 0;
             state.method = 0;
 
-            return res.sendFile(__dirname + "/public/status.html");
+            return res.redirect("/status.html");
         })
             .catch(err => {
                 console.log(err);
-                return res.sendFile(__dirname + "/public/status.html?code=3");
+                return res.redirect("/status.html?code=3");
             })
     } catch (e) {
-        return res.sendFile(__dirname + "/public/status.html?code=4");
+        return res.redirect("/status.html?code=4");
     }
 })
 
 // Invite code stuff
 app.get("/inviteLogin", (req, res) => {
-    if (typeof req.query.code === "undefined" || typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.sendFile(__dirname + "/public/status.html?code=0");
-    if (!invites.has(req.query.code)) return res.sendFile(__dirname + "/public/status.html?code=5");
+    if (typeof req.query.code === "undefined" || typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.redirect("/status.html?code=0");
+    if (!invites.has(req.query.code)) return res.redirect("/status.html?code=5");
 
     const state = states.get(req.query.state);
     const codeValue = invites.get(req.query.code);
@@ -121,7 +121,7 @@ app.get("/inviteLogin", (req, res) => {
         const inviteValues = [...invites.values()];
         if (values.includes(state.username) || inviteValues.includes(state.username)) {
             state.ownerShip = false;
-            return res.sendFile(__dirname + "/public/status.html?code=2&info=" + encodeURIComponent(state.username));
+            return res.redirect("/status.html?code=2&info=" + encodeURIComponent(state.username));
         }
 
         invites.set(req.query.code, state.username);
@@ -132,7 +132,7 @@ app.get("/inviteLogin", (req, res) => {
             state.ownerShip = true;
         } else {
             state.ownerShip = false;
-            return res.sendFile(__dirname + "/public/status.html?code=1&info=" + encodeURIComponent(db.get(_res.data.id)));
+            return res.redirect("/status.html?code=1&info=" + encodeURIComponent(db.get(_res.data.id)));
         }
     }
 
@@ -141,17 +141,17 @@ app.get("/inviteLogin", (req, res) => {
     req.session.method = 1;
     state.method = 1;
 
-    return res.sendFile(__dirname + "/public/status.html");
+    return res.redirect("/status.html");
 });
 
 // Login page
 app.get("/login", (req, res) => {
-    if (typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.sendFile(__dirname + "/public/status.html?code=0");
+    if (typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.redirect("/status.html?code=0");
     const state = states.get(req.query.state);
     if (req.session.username && state.username === req.session.username) {
         state.ownerShip = true;
         state.method = req.session.method;
-        return res.sendFile(__dirname + "/public/status.html");
+        return res.redirect("/status.html");
     }
 
     res.sendFile(__dirname + "/public/login.html");
@@ -159,7 +159,7 @@ app.get("/login", (req, res) => {
 
 // API for mc server
 app.get("/api/genState", (req, res) => {
-    if (typeof req.query.username === "undefined") return res.sendFile(__dirname + "/public/status.html?code=0");
+    if (typeof req.query.username === "undefined") return res.redirect("/status.html?code=0");
 
     const username = req.query.username;
     const stateID = randomString(10);
@@ -176,7 +176,7 @@ app.get("/api/genState", (req, res) => {
     })
 });
 app.get("/api/checkState", (req, res) => {
-    if (typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.sendFile(__dirname + "/public/status.html?code=0");
+    if (typeof req.query.state === "undefined" || !states.has(req.query.state)) return res.redirect("/status.html?code=0");
 
     return res.json(states.get(req.query.state));
 });
