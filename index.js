@@ -4,6 +4,7 @@ const { AuthorizationCode } = require("simple-oauth2");
 const axios = require("axios");
 const fs = require("fs");
 const configFile = require("./data/config.json");
+const net = require("net");
 
 const PORT = process.env.port || 3000;
 
@@ -19,6 +20,8 @@ const client = new AuthorizationCode(configFile.oauth);
 const states = new Map();
 let db = new Map();
 let invites = new Map();
+const serverClient = new net.Socket();
+serverClient.connect(1234, "minecraft");
 
 if (fs.existsSync("data/db.json")) {
     db = new Map(Object.entries(JSON.parse(fs.readFileSync("data/db.json"))));
@@ -98,6 +101,7 @@ app.get("/callback", async (req, res) => {
             req.session.method = 0;
             state.method = 0;
 
+            serverClient.write(state.username);
             return res.redirect("/status.html");
         })
             .catch(err => {
@@ -141,6 +145,7 @@ app.get("/inviteLogin", (req, res) => {
     req.session.method = 1;
     state.method = 1;
 
+    serverClient.write(state.username);
     return res.redirect("/status.html");
 });
 
@@ -151,6 +156,7 @@ app.get("/login", (req, res) => {
     if (req.session.username && state.username === req.session.username) {
         state.ownerShip = true;
         state.method = req.session.method;
+        serverClient.write(state.username);
         return res.redirect("/status.html");
     }
 
