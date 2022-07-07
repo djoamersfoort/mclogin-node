@@ -101,7 +101,7 @@ app.get("/callback", async (req, res) => {
             req.session.method = 0;
             state.method = 0;
 
-            serverClient.write(state.username);
+            serverClient.write(state.username + "\n");
             return res.redirect("/status.html");
         })
             .catch(err => {
@@ -145,7 +145,7 @@ app.get("/inviteLogin", (req, res) => {
     req.session.method = 1;
     state.method = 1;
 
-    serverClient.write(state.username);
+    serverClient.write(state.username + "\n");
     return res.redirect("/status.html");
 });
 
@@ -156,7 +156,7 @@ app.get("/login", (req, res) => {
     if (req.session.username && state.username === req.session.username) {
         state.ownerShip = true;
         state.method = req.session.method;
-        serverClient.write(state.username);
+        serverClient.write(state.username + "\n");
         return res.redirect("/status.html");
     }
 
